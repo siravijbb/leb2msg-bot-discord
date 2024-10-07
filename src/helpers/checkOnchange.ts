@@ -16,13 +16,54 @@ export const onChange = async (
     prev: class_activity_pageType
 ) => {
     const now = Date.now();
+    const FIVE_DAY_DUE_DATE_PASS = 5 * 24 * 60 * 60 * 1000; // 10 days in milliseconds
     const TWENTY_MINUTES = 20 * 60 * 1000;
+
+    // Function to parse "Month Day, Year at HH:mm" format
+    const parseDueDate = (dueDateStr: string) => {
+        try {
+            // Split the date and time components
+            const [datePart, timePart] = dueDateStr.split(' at ');
+
+            // Reconstruct the valid Date string
+            const validDateStr = `${datePart}, ${timePart}`;
+            const parsedDate = new Date(validDateStr);
+
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse due date: ${dueDateStr}`);
+                return null;
+            }
+            return parsedDate;
+        } catch (error) {
+            console.error(`Error parsing due date: ${dueDateStr}`);
+            return null;
+        }
+    };
 
     for (const key of Object.keys(data)) {
         const newAssignments = data[key].filter(item => {
-            if (prev[key]) {
-                return !prev[key].some(prevItem => prevItem.title === item.title);
+            // Check if the assignment exists in previous data
+            const isNewAssignment = prev[key]
+                ? !prev[key].some(prevItem => prevItem.title === item.title)
+                : true;
+
+            if (!isNewAssignment) return false;
+
+            // Parse the due_date and check if it's valid
+            if (item.due_date) {
+                const dueDate = parseDueDate(item.due_date); // Use the new parsing function
+
+                // Ensure the due date is valid and hasn't passed more than 10 days ago
+                if (dueDate && dueDate.getTime()) {
+                    const tenDaysAgo = now - FIVE_DAY_DUE_DATE_PASS;
+                    if (dueDate.getTime() < tenDaysAgo) {
+                        return false; // Ignore assignments that are past the due date by more than 10 days
+                    }
+                } else {
+                    console.error(`Invalid date format for due_date: ${item.due_date}`);
+                }
             }
+
             return true;
         });
 
@@ -32,7 +73,12 @@ export const onChange = async (
 
             const lastSent = lastSentAssignments.find(entry => entry.key === lastSentKey);
             if (!lastSent || (now - lastSent.timestamp) > TWENTY_MINUTES) {
-                await lineNotification(`Class: ${key} has New Assignments:\n${message}`);
+                let formattedMessage = {
+                    name: 'Class: ' + key + ' has New Assignments:',
+                    value: message
+                };
+                console.log(formattedMessage);
+                await lineNotification('Class: ' + key + ' has New Assignments:', message);
                 if (lastSent) {
                     lastSent.timestamp = now;
                 } else {

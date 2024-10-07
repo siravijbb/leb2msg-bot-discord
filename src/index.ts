@@ -64,7 +64,7 @@ dotenv.config();
     return item.replace("/checkAfterAccessClass", "/activity");
   });
 
-  var prev_class_activity_page: class_activity_pageType = { 'GEN 121': [] };
+  var prev_class_activity_page: class_activity_pageType = { 'GEN 121-5': [] };
 
   console.log(new Date().toLocaleTimeString());
 
