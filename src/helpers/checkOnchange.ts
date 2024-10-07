@@ -85,7 +85,7 @@ export const onChange = async (
                     value: message
                 };
                 console.log(formattedMessage);
-                await lineNotification('Class: ' + key + ' has New Assignments:', message);
+                await lineNotification('Class: ' + key + ' has Assignments:', message);
                 if (lastSent) {
                     lastSent.timestamp = now;
                 } else {
