@@ -6,11 +6,11 @@ dotenv.config();
 const lineNotifyOption = (message: string) => {
   return {
     method: "POST",
-    uri: "https://notify-api.line.me/api/notify",
+    uri: "https://discord.com/api/webhooks/1292733516634652725/DHnUbrzfQjNoIAxfPU5zXey-8rYr0foyf0X1FUw8Ak3gbSCJMPjtXGEJKqJlSMBB28xk",
     headers: {
-      Authorization: `Bearer ${process.env.LINE_TOKEN}`,
+      'Content-Type': 'application/json',
     },
-    form: {
+    body: {
       message: JSON.stringify(message),
     },
   };

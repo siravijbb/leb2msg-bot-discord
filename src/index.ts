@@ -19,35 +19,51 @@ dotenv.config();
 (async () => {
   const stats = await PCR();
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false, // set to false to see browser UI
     executablePath: stats.executablePath,
     args: ["--no-sandbox"],
   });
-
   const page = await browser.newPage();
+  console.log("Navigating to login page...");
   await page.goto(
-    "https://login.leb2.org/login?app_id=1&redirect_uri=https%3A%2F%2Fapp.leb2.org%2Flogin"
+      "https://login1.leb2.org/login?app_id=1&redirect_uri=https%3A%2F%2Fapp.leb2.org%2Flogin"
   );
 
-  await page.type("#username", process.env.USERNAME as string);
-  await page.type("#password", process.env.PASSWORD as string);
-  await page.click("button[type=submit]");
-  await page.waitForNavigation();
+  console.log("Typing username...");
+  await page.type("#username", process.env.KMUTTID as string);
 
+  console.log("Typing password...");
+  await page.type("#password", process.env.PASSWORD as string);
+  console.log("Waiting for 2 seconds before submitting...");
+  await page.waitForTimeout(5000);
+  console.log("Clicking submit button and waiting for navigation...");
+  await Promise.all([
+    page.click("button[type=submit]"),
+    page.waitForNavigation({ waitUntil: 'networkidle0' }),
+  ]);
+
+  console.log("Current URL after login:", page.url());
+  console.log("Navigating to class page...");
+  await page.goto(
+      "https://app.leb2.org/class"
+  );
+
+  console.log("Getting class section...");
   const class_section = await page.evaluate(() => {
     return Array.from(
-      document.querySelectorAll(
-        'div[class="col-xs-12 col-md-6 col-lg-4 col-xl-3 whole-card "] > div'
-      )
-      //@ts-ignore
+        document.querySelectorAll(
+            'div[class="col-xs-12 col-md-6 col-lg-4 col-xl-3 whole-card "] > div'
+        )
+        //@ts-ignore
     ).map((item) => item.attributes["data-url"].value);
   });
 
+  console.log("Total class", class_section);
   const class_activity = class_section.map((item) => {
-    return item.replace("/plan/syllabus/index", "/activity");
+    return item.replace("/checkAfterAccessClass", "/activity");
   });
 
-  var prev_class_activity_page: class_activity_pageType = { 'GEN 231-17': [] };
+  var prev_class_activity_page: class_activity_pageType = { 'GEN 121': [] };
 
   console.log(new Date().toLocaleTimeString());
 

@@ -12,19 +12,16 @@ export const onChange = (
   data: class_activity_pageType,
   prev: class_activity_pageType
 ) => {
+  console.log("CALLING ON CHANGE")
   Object.keys(data).forEach((key) => {
     data[key].forEach((item) => {
-      if (prev[key]) {
-        const isExist = prev[key].find(
-          (prevItem) => prevItem.title === item.title
-        );
 
-        if (!isExist) {
+
           lineNotification(
             `Class: ${key} has New Assignment: ${item.title} | due date: ${item.due_date}`
           );
-        }
-      }
+
+
     });
   });
 };
