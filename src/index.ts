@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 //@ts-ignore
 import PCR from "puppeteer-chromium-resolver";
+// @ts-ignore
 import { onChange } from "./helpers/checkOnChange";
 import { makeCurrentClassActivity } from "./helpers/makeCurrentClassActivity";
 
@@ -35,7 +36,7 @@ dotenv.config();
   console.log("Typing password...");
   await page.type("#password", process.env.PASSWORD as string);
   console.log("Waiting for 2 seconds before submitting...");
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(1000);
   console.log("Clicking submit button and waiting for navigation...");
   await Promise.all([
     page.click("button[type=submit]"),

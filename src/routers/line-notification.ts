@@ -4,15 +4,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const lineNotifyOption = (message: string) => {
+  const webhookUri = process.env.DISCORDWEBHOOK;
+  if (!webhookUri) {
+    throw new Error("DISCORDWEBHOOK is not defined in the environment variables");
+  }
   return {
     method: "POST",
-    uri: "https://discord.com/api/webhooks/",
+    uri: webhookUri,
     headers: {
       'Content-Type': 'application/json',
     },
-    body: {
-      message: JSON.stringify(message),
-    },
+    body: JSON.stringify({  username: "My Webhook Name",
+      avatar_url: "",
+      content: message }),
   };
 };
 
