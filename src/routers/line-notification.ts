@@ -17,7 +17,6 @@ const lineNotifyOption = (name: string,value: any) => {
     body: JSON.stringify({
       username: "My Webhook Name",
       avatar_url: "",
-      content: "Here is assignments",
       embeds: [
         {
           color: 999999,

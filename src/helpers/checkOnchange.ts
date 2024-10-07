@@ -16,7 +16,7 @@ export const onChange = async (
     prev: class_activity_pageType
 ) => {
     const now = Date.now();
-    const FIVE_DAY_DUE_DATE_PASS = 5 * 24 * 60 * 60 * 1000; // 10 days in milliseconds
+    const TEN_DAYS_IN_MS = 10 * 24 * 60 * 60 * 1000; // 10 days in milliseconds
     const TWENTY_MINUTES = 20 * 60 * 1000;
 
     // Function to parse "Month Day, Year at HH:mm" format
@@ -47,20 +47,24 @@ export const onChange = async (
                 ? !prev[key].some(prevItem => prevItem.title === item.title)
                 : true;
 
+            // Ignore assignments without a valid title
+            if (!item.title) {
+                return false;
+            }
+
             if (!isNewAssignment) return false;
 
-            // Parse the due_date and check if it's valid
+            // If due_date exists and is a string, parse it
+            let dueDate = null;
             if (item.due_date) {
-                const dueDate = parseDueDate(item.due_date); // Use the new parsing function
+                dueDate = parseDueDate(item.due_date);
+            }
 
-                // Ensure the due date is valid and hasn't passed more than 10 days ago
-                if (dueDate && dueDate.getTime()) {
-                    const tenDaysAgo = now - FIVE_DAY_DUE_DATE_PASS;
-                    if (dueDate.getTime() < tenDaysAgo) {
-                        return false; // Ignore assignments that are past the due date by more than 10 days
-                    }
-                } else {
-                    console.error(`Invalid date format for due_date: ${item.due_date}`);
+            // Ensure the due date is valid and hasn't passed more than 10 days ago
+            if (dueDate && dueDate.getTime()) {
+                const tenDaysAgo = now - TEN_DAYS_IN_MS;
+                if (dueDate.getTime() < tenDaysAgo) {
+                    return false; // Ignore assignments that are past the due date by more than 10 days
                 }
             }
 
@@ -68,7 +72,10 @@ export const onChange = async (
         });
 
         if (newAssignments.length > 0) {
-            const message = newAssignments.map(item => `Assignment: ${item.title} | due date: ${item.due_date}`).join('\n');
+            const message = newAssignments
+                .map(item => `Assignment: ${item.title} | due date: ${item.due_date ?? "No due date specified"}`)
+                .join('\n');
+
             const lastSentKey = `${key}:${message}`;
 
             const lastSent = lastSentAssignments.find(entry => entry.key === lastSentKey);
