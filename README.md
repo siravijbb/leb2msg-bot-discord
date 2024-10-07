@@ -7,9 +7,9 @@ run command for install package : ``` npm install ```
 
 ## setup .env
 ```
-USERNAME=
+KMUTTID=
 PASSWORD=
-LINE_TOKEN=
+DISCORDWEBHOOK=
 ```
 
 ## run project
