@@ -9,7 +9,7 @@ interface class_activity_pageType {
 }
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-const lastSentAssignments: { key: string, timestamp: number }[] = [];
+const lastSentAssignments: { key: string, assignments: string[], timestamp: number }[] = [];
 
 export const onChange = async (
     data: class_activity_pageType,
@@ -88,8 +88,9 @@ export const onChange = async (
                 await lineNotification('Class: ' + key + ' has Assignments:', message);
                 if (lastSent) {
                     lastSent.timestamp = now;
+                    lastSent.assignments = newAssignments.map(item => item.title!);
                 } else {
-                    lastSentAssignments.push({ key: lastSentKey, timestamp: now });
+                    lastSentAssignments.push({ key: lastSentKey, assignments: newAssignments.map(item => item.title!), timestamp: now });
                 }
                 await delay(1000); // Delay of 1 second
             }

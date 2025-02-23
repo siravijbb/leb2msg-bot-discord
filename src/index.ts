@@ -87,7 +87,7 @@ function delay(ms: number) {
     onChange(class_activity_page, prev_class_activity_page);
 
     prev_class_activity_page = class_activity_page;
-  }, 1000 * 60 * 20);
+  }, 1000 * 60 * 1);
   browser.close()
 })();
 
