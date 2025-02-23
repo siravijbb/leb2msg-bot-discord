@@ -20,7 +20,7 @@ dotenv.config();
 (async () => {
   const stats = await PCR();
   const browser = await puppeteer.launch({
-    headless: false, // set to false to see browser UI
+    headless: true, // set to false to see browser UI
     executablePath: stats.executablePath,
     args: ["--no-sandbox"],
   });
@@ -84,4 +84,5 @@ dotenv.config();
 
     prev_class_activity_page = class_activity_page;
   }, 1000 * 60 * 20);
+  browser.close()
 })();
