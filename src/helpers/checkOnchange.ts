@@ -11,8 +11,8 @@ interface class_activity_pageType {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const lastSentAssignments: { key: string, assignments: string[], timestamp: number }[] = [];
 
-const PUBLISH_DATE_LIMIT = 10 * 24 * 60 * 60 * 1000; // 10 days in milliseconds
-const DUE_DATE_LIMIT = 10 * 24 * 60 * 60 * 1000; // 10 days after due date
+const PUBLISH_DATE_LIMIT = 14 * 24 * 60 * 60 * 1000; // 10 days in milliseconds
+const DUE_DATE_LIMIT = 3 * 24 * 60 * 60 * 1000; // 10 days after due date
 const TWENTY_MINUTES = 20 * 60 * 1000;
 const now = Date.now();
 
